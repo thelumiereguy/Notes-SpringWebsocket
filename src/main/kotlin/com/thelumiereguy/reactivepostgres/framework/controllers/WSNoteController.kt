@@ -8,21 +8,22 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.AppURLs.notesSubscriptionTopic
 import com.thelumiereguy.reactivepostgres.config.AppURLs.stompBrokerEndpoint
-import com.thelumiereguy.reactivepostgres.presentation.dto.Note
-import com.thelumiereguy.reactivepostgres.presentation.dto.NoteRequestDTO
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.NoteRequestDTO
+import com.thelumiereguy.reactivepostgres.usecases.update_note.create.CreateNote
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.stereotype.Controller
 
 @Controller
-class WSNoteController {
+class WSNoteController constructor(@Autowired private val createNote: CreateNote) {
 
     @MessageMapping(AppURLs.updateEndpoint)
     @SendTo(stompBrokerEndpoint + notesSubscriptionTopic)
     fun updateNote(@Payload requestDTO: NoteRequestDTO): Note {
-        println("Welcome ${requestDTO.note.title}")
-        return requestDTO.note
+        return createNote(requestDTO.note)
     }
 
 }

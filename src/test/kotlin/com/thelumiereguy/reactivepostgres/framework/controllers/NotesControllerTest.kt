@@ -6,7 +6,7 @@
 package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
-import com.thelumiereguy.reactivepostgres.presentation.dto.GetNotesResponseDTO
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.GetNotesResponseDTO
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
