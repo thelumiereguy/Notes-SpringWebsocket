@@ -23,6 +23,7 @@ class WSConfig : WebSocketMessageBrokerConfigurer {
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint(AppURLs.wsEndpoint).setAllowedOriginPatterns("*")
+        registry.addEndpoint(AppURLs.wsEndpoint).setAllowedOriginPatterns("*").withSockJS()
     }
 
 

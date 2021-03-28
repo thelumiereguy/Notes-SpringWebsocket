@@ -5,8 +5,12 @@
 
 package com.thelumiereguy.reactivepostgres.presentation.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class NoteRequestDTO(
+    @JsonProperty("note")
     val note: Note,
+    @JsonProperty("actionType")
     val actionType: ActionType
 )
 

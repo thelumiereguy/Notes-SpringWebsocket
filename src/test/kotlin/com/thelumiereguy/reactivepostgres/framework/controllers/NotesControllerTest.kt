@@ -7,7 +7,7 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.presentation.dto.GetNotesResponseDTO
-import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericDTOWrapper
+import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -36,12 +36,11 @@ internal class NotesControllerTest @Autowired constructor(
                 .uri(AppURLs.baseURL + AppURLs.getNotes)
                 .exchange()
                 .expectStatus().isOk
-                .expectBody<GenericDTOWrapper<GetNotesResponseDTO>>()
+                .expectBody<GenericResponseDTOWrapper<GetNotesResponseDTO>>()
                 .consumeWith {
                     it.responseBody?.data?.notes?.forEach {
                         Assertions.assertThat(it.id).isNotZero
                         Assertions.assertThat(it.created_by).isNotEmpty
-                        Assertions.assertThat(it.editors).isNotEmpty()
                     }
                 }
         }

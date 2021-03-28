@@ -7,28 +7,21 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.thelumiereguy.reactivepostgres.config.AppURLs
+import com.thelumiereguy.reactivepostgres.config.AppURLs.applicationEndpoint
 import com.thelumiereguy.reactivepostgres.config.AppURLs.notesSubscriptionTopic
 import com.thelumiereguy.reactivepostgres.config.AppURLs.stompBrokerEndpoint
+import com.thelumiereguy.reactivepostgres.config.AppURLs.updateEndpoint
+import com.thelumiereguy.reactivepostgres.presentation.dto.ActionType
 import com.thelumiereguy.reactivepostgres.presentation.dto.Note
+import com.thelumiereguy.reactivepostgres.presentation.dto.NoteRequestDTO
+import org.hildan.jackstomp.JackstompClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.messaging.simp.stomp.StompFrameHandler
-import org.springframework.messaging.simp.stomp.StompHeaders
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter
-import org.springframework.web.socket.client.standard.StandardWebSocketClient
-import org.springframework.web.socket.messaging.WebSocketStompClient
-import java.lang.reflect.Type
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.TimeUnit
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
-import org.springframework.messaging.simp.stomp.StompCommand
-
-import org.springframework.messaging.simp.stomp.StompSession
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,49 +36,32 @@ internal class WSNoteControllerTest(
         "ws://localhost:$port" + AppURLs.wsEndpoint
     }
 
-    lateinit var blockingQueue: BlockingQueue<Note>
-
-    lateinit var stompClient: WebSocketStompClient
+    lateinit var stompClient: JackstompClient
 
     @BeforeEach
     fun setup() {
-        blockingQueue = LinkedBlockingDeque()
-        stompClient = WebSocketStompClient(StandardWebSocketClient()).apply {
-            messageConverter = MappingJackson2MessageConverter()
+        stompClient = JackstompClient().apply {
+            webSocketClient.messageConverter = MappingJackson2MessageConverter()
         }
+
     }
 
     @Test
-    fun `test`() {
-        val session = stompClient
-            .connect(WEBSOCKET_URI, object : StompSessionHandlerAdapter() {})[1, TimeUnit.SECONDS]
+    fun `test basic update publish `() {
+        val session =
+            stompClient.syncConnect(WEBSOCKET_URI)
 
-        session.subscribe(stompBrokerEndpoint + notesSubscriptionTopic, DefaultStompFrameHandler())
+        val channel = session.subscribe(stompBrokerEndpoint + notesSubscriptionTopic, Note::class.java)
 
-        val message = objectMapper.writeValueAsString(Note("", "", "", System.currentTimeMillis(), listOf()))
-        session.send(stompBrokerEndpoint + notesSubscriptionTopic, message.toByteArray())
+        val noteRequestDTO = NoteRequestDTO(
+            Note("test", "test", "test", System.currentTimeMillis()),
+            ActionType.CREATE
+        )
 
-        assertEquals(message, blockingQueue.poll(1, TimeUnit.SECONDS))
-    }
+        session.send(applicationEndpoint + updateEndpoint, noteRequestDTO)
 
-    inner class DefaultStompFrameHandler : StompSessionHandlerAdapter() {
-        override fun getPayloadType(stompHeaders: StompHeaders): Type {
-            return Note::class.java
-        }
+        val note = channel.next()
 
-        override fun handleFrame(stompHeaders: StompHeaders, o: Any?) {
-            println(": - $o   ${o!!.javaClass}")
-            blockingQueue.offer(o as Note)
-        }
-
-        override fun handleException(
-            session: StompSession,
-            command: StompCommand?,
-            headers: StompHeaders,
-            payload: ByteArray,
-            exception: Throwable
-        ) {
-            exception.printStackTrace();
-        }
+        assertEquals(noteRequestDTO.note, note)
     }
 }
