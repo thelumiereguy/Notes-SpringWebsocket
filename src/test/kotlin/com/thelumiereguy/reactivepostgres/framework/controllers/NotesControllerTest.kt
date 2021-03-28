@@ -3,7 +3,7 @@
  *  Copyright (c) 2021 People Interactive. All rights reserved.
  */
 
-package com.thelumiereguy.reactivepostgres.framework.controller
+package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.presentation.dto.GetNotesResponseDTO
@@ -39,6 +39,7 @@ internal class NotesControllerTest @Autowired constructor(
                 .expectBody<GenericDTOWrapper<GetNotesResponseDTO>>()
                 .consumeWith {
                     it.responseBody?.data?.notes?.forEach {
+                        Assertions.assertThat(it.id).isNotZero
                         Assertions.assertThat(it.created_by).isNotEmpty
                         Assertions.assertThat(it.editors).isNotEmpty()
                     }

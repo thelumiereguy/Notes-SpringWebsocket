@@ -3,7 +3,7 @@
  *  Copyright (c) 2021 People Interactive. All rights reserved.
  */
 
-package com.thelumiereguy.reactivepostgres.framework.controller
+package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.AppURLs.notesSubscriptionTopic
@@ -20,7 +20,7 @@ class WSNoteController {
 
     @MessageMapping(AppURLs.updateEndpoint)
     @SendTo(stompBrokerEndpoint + notesSubscriptionTopic)
-    fun sendMessage(@Payload requestDTO: NoteRequestDTO): Note {
+    fun updateNote(@Payload requestDTO: NoteRequestDTO): Note {
         println("Welcome ${requestDTO.note.title}")
         return requestDTO.note
     }

@@ -29,6 +29,7 @@ dependencies {
 //    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.hildan.jackstomp:jackstomp:2.1.0")
 
 
 

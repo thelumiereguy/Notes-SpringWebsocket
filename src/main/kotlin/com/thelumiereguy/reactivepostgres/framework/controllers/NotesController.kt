@@ -3,7 +3,7 @@
  *  Copyright (c) 2021 People Interactive. All rights reserved.
  */
 
-package com.thelumiereguy.reactivepostgres.framework.controller
+package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.presentation.dto.GetNotesResponseDTO
