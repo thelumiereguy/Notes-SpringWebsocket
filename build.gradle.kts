@@ -29,6 +29,13 @@ dependencies {
 //    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+
+
+
+    //Websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.webjars:webjars-locator-core")
+    implementation("org.webjars:stomp-websocket:2.3.3")
 }
 
 tasks.withType<KotlinCompile> {

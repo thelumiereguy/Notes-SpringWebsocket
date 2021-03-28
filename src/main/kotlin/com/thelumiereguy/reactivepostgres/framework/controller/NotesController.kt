@@ -5,19 +5,20 @@
 
 package com.thelumiereguy.reactivepostgres.framework.controller
 
-import com.thelumiereguy.reactivepostgres.config.AppURL
-import com.thelumiereguy.reactivepostgres.config.NotesURL
+import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.presentation.dto.GetNotesResponseDTO
-import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericDataWrapper
-import org.springframework.web.bind.annotation.*
+import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericDTOWrapper
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(AppURL.baseURL)
+@RequestMapping(AppURLs.baseURL)
 class NotesController {
 
-    @GetMapping(NotesURL.getNotes)
-    fun getNotes(): GenericDataWrapper<GetNotesResponseDTO> {
-        return GenericDataWrapper(GetNotesResponseDTO(emptyList()))
+    @GetMapping(AppURLs.getNotes)
+    fun getNotes(): GenericDTOWrapper<GetNotesResponseDTO> {
+        return GenericDTOWrapper(GetNotesResponseDTO(emptyList()))
     }
 
 }
