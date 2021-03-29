@@ -6,17 +6,16 @@
 package com.thelumiereguy.reactivepostgres.presentation.dto.note
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.constraints.NotNull
 
 data class NoteRequestDTO(
     @JsonProperty("note")
-    val note: Note,
-    @JsonProperty("actionType")
-    val actionType: ActionType
+    val note: Note?
 )
 
-
-enum class ActionType {
-    CREATE,
-    DELETE,
-    UPDATE
-}
+data class UpdateResponseDTO(
+    @JsonProperty("message")
+    val message: String,
+    @JsonProperty("note")
+    val note: Note,
+)

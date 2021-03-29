@@ -6,16 +6,21 @@
 package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
+import com.thelumiereguy.reactivepostgres.config.successCreateMessage
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.GetNotesResponseDTO
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.NoteRequestDTO
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.UpdateResponseDTO
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.assertj.core.api.Assertions.assertThat
+import org.hildan.jackstomp.JackstompClient
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 
@@ -25,9 +30,23 @@ internal class NotesControllerTest @Autowired constructor(
     val client: WebTestClient
 ) {
 
+    @LocalServerPort
+    var port: Int = 0
+
+    val WEBSOCKET_URI by lazy {
+        "ws://localhost:$port" + AppURLs.wsEndpoint
+    }
+
+    lateinit var stompClient: JackstompClient
+
+    @BeforeEach
+    fun setup() {
+        stompClient = JackstompClient()
+    }
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName(AppURLs.getNotes)
+    @DisplayName("GET ${AppURLs.getNotes}")
     inner class GetNotes {
 
         @Test
@@ -39,10 +58,70 @@ internal class NotesControllerTest @Autowired constructor(
                 .expectBody<GenericResponseDTOWrapper<GetNotesResponseDTO>>()
                 .consumeWith {
                     it.responseBody?.data?.notes?.forEach {
-                        Assertions.assertThat(it.id).isNotZero
-                        Assertions.assertThat(it.created_by).isNotEmpty
+                        assertThat(it.id).isNotZero
+                        assertThat(it.created_by).isNotEmpty
                     }
                 }
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("POST ${AppURLs.updateNote}")
+    inner class CreateNote {
+
+        @Test
+        fun `should create new bank and add to db`() {
+
+            val noteObj = Note("", "", "test_user", System.currentTimeMillis())
+
+            val session =
+                stompClient.syncConnect(WEBSOCKET_URI)
+
+            //Subscribe to socket for changes in notes
+            val channel =
+                session.subscribe(AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic, Note::class.java)
+
+
+            //Add Note
+            client.post()
+                .uri(AppURLs.baseURL + AppURLs.updateNote)
+                .bodyValue(NoteRequestDTO(noteObj))
+                .exchange()
+                .expectStatus().isOk
+                .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
+                .consumeWith {
+                    assertThat(it.responseBody).isNotNull
+                    it.responseBody?.data?.let {
+                        assertThat(it.message).isEqualTo(successCreateMessage)
+                    }
+                }
+
+            //Get latest note pushed to socket
+            val note = channel.next()
+
+            assertEquals(noteObj, note)
+        }
+
+        @Test
+        fun `basic validations for request body`() {
+
+            val noteObj = Note("", "", "", System.currentTimeMillis())
+
+            //Add Note
+            client.post()
+                .uri(AppURLs.baseURL + AppURLs.updateNote)
+                .bodyValue(NoteRequestDTO(noteObj))
+                .exchange()
+                .expectStatus().isOk
+                .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
+                .consumeWith {
+                    assertThat(it.responseBody).isNotNull
+                    it.responseBody?.data?.let {
+                        assertThat(it.message).isEqualTo(successCreateMessage)
+                    }
+                }
+
         }
     }
 }

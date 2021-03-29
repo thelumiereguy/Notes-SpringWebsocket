@@ -18,6 +18,8 @@ repositories {
 dependencies {
 //    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -30,14 +32,13 @@ dependencies {
 //    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.hildan.jackstomp:jackstomp:2.1.0")
-
 
 
     //Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.webjars:webjars-locator-core")
     implementation("org.webjars:stomp-websocket:2.3.3")
+    testImplementation("org.hildan.jackstomp:jackstomp:2.1.0")
 }
 
 tasks.withType<KotlinCompile> {
