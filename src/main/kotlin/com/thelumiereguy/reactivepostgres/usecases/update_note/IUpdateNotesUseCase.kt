@@ -8,5 +8,5 @@ package com.thelumiereguy.reactivepostgres.usecases.update_note
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
 
 interface IUpdateNotesUseCase {
-    operator fun invoke(note: Note): Note
+    suspend operator fun invoke(note: Note): Note
 }

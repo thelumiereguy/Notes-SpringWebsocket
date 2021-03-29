@@ -10,5 +10,5 @@ import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
 interface INoteDataSource {
     suspend fun getAllNotes(): List<Note>
 
-    fun createNote(note: Note): Note
+    suspend fun createNote(note: Note): Note
 }

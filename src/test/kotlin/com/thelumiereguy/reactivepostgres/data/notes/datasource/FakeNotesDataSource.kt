@@ -11,7 +11,7 @@ import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 
-class FakeNotesDataSource(val noteMapper: NoteMapper) : INoteDataSource {
+class FakeNotesDataSource(private val noteMapper: NoteMapper) : INoteDataSource {
 
     private val notesList = mutableListOf<NoteEntity>()
 
@@ -22,7 +22,7 @@ class FakeNotesDataSource(val noteMapper: NoteMapper) : INoteDataSource {
     }
 
 
-    override fun createNote(note: Note): Note {
+    override suspend fun createNote(note: Note): Note {
         val noteEntity = noteMapper.toEntity(note)
         notesList.add(noteEntity)
         return note

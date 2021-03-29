@@ -23,7 +23,7 @@ class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INote
     }
 
 
-    override fun createNote(note: Note): Note {
+    override suspend fun createNote(note: Note): Note {
         val noteEntity = noteMapper.toEntity(note)
         notesList.add(noteEntity)
         return note

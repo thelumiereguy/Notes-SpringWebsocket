@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class CreateNote constructor(@Autowired private val dataSource: INoteDataSource) : IUpdateNotesUseCase {
 
-    override fun invoke(note: Note): Note {
+    override suspend fun invoke(note: Note): Note {
         return dataSource.createNote(note)
     }
 }

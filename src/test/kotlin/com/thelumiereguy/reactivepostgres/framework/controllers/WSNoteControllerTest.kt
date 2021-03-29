@@ -79,6 +79,7 @@ internal class WSNoteControllerTest @Autowired constructor(
             ActionType.CREATE
         )
         session.send(applicationEndpoint + updateEndpoint, noteRequestDTO)
+
         val note = channel.next()
         assertEquals(noteRequestDTO.note, note)
 

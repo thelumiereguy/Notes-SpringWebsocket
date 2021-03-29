@@ -11,19 +11,30 @@ import com.thelumiereguy.reactivepostgres.config.AppURLs.stompBrokerEndpoint
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.NoteRequestDTO
 import com.thelumiereguy.reactivepostgres.usecases.update_note.create.CreateNote
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Controller
 
 @Controller
-class WSNoteController constructor(@Autowired private val createNote: CreateNote) {
+class WSNoteController @Autowired constructor(
+    private val createNote: CreateNote,
+    private val brokerMessagingTemplate: SimpMessagingTemplate
+) {
 
     @MessageMapping(AppURLs.updateEndpoint)
     @SendTo(stompBrokerEndpoint + notesSubscriptionTopic)
-    fun updateNote(@Payload requestDTO: NoteRequestDTO): Note {
-        return createNote(requestDTO.note)
+    fun updateNote(@Payload requestDTO: NoteRequestDTO) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val note = createNote(requestDTO.note)
+            brokerMessagingTemplate.convertAndSend(stompBrokerEndpoint + notesSubscriptionTopic, note)
+        }
     }
 
 }
