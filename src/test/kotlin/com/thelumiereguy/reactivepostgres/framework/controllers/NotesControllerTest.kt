@@ -9,10 +9,8 @@ import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.successCreateMessage
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.GetNotesResponseDTO
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
-import com.thelumiereguy.reactivepostgres.presentation.dto.note.NoteRequestDTO
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.UpdateResponseDTO
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.hildan.jackstomp.JackstompClient
 import org.junit.jupiter.api.*
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.http.ResponseEntity
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 
@@ -86,7 +85,7 @@ internal class NotesControllerTest @Autowired constructor(
             //Add Note
             client.post()
                 .uri(AppURLs.baseURL + AppURLs.updateNote)
-                .bodyValue(NoteRequestDTO(noteObj))
+                .bodyValue(noteObj)
                 .exchange()
                 .expectStatus().isOk
                 .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
@@ -111,16 +110,9 @@ internal class NotesControllerTest @Autowired constructor(
             //Add Note
             client.post()
                 .uri(AppURLs.baseURL + AppURLs.updateNote)
-                .bodyValue(NoteRequestDTO(noteObj))
+                .bodyValue(noteObj)
                 .exchange()
-                .expectStatus().isOk
-                .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
-                .consumeWith {
-                    assertThat(it.responseBody).isNotNull
-                    it.responseBody?.data?.let {
-                        assertThat(it.message).isEqualTo(successCreateMessage)
-                    }
-                }
+                .expectStatus().isBadRequest
 
         }
     }

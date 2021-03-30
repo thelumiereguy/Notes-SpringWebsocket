@@ -13,9 +13,9 @@ data class Note(
     @JsonProperty("content")
     val content: String?,
     @JsonProperty("created_by")
-    val created_by: String,
+    val created_by: String?,
     @JsonProperty("created_on")
-    val created_on: Long,
+    val created_on: Long?,
     @JsonProperty("id")
     val id: Long = 0,
 )
