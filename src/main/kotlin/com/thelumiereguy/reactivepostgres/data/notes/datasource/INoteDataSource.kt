@@ -11,4 +11,8 @@ interface INoteDataSource {
     suspend fun getAllNotes(): List<Note>
 
     suspend fun createNote(note: Note): Note
+
+    suspend fun getNoteById(id: Long): Note?
+
+    suspend fun deleteNote(noteId: Long)
 }

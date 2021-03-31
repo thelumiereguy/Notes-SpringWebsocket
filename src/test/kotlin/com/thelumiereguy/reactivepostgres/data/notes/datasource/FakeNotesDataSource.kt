@@ -27,6 +27,16 @@ class FakeNotesDataSource(private val noteMapper: NoteMapper) : INoteDataSource 
         notesList.add(noteEntity)
         return note
     }
+
+
+    override suspend fun getNoteById(id: Long): Note? {
+        val note = notesList.find { it.id == id }
+        return note?.let { noteMapper.fromEntity(it) }
+    }
+
+    override suspend fun deleteNote(noteId: Long) {
+        notesList.removeAll { it.id == noteId }
+    }
 }
 
 @TestConfiguration

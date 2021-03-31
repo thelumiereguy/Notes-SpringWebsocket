@@ -7,13 +7,13 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.successCreateMessage
-import com.thelumiereguy.reactivepostgres.presentation.dto.note.GetNotesResponseDTO
-import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
-import com.thelumiereguy.reactivepostgres.presentation.dto.note.UpdateResponseDTO
+import com.thelumiereguy.reactivepostgres.config.successDeleteMessage
+import com.thelumiereguy.reactivepostgres.presentation.dto.note.*
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.wrap
 import com.thelumiereguy.reactivepostgres.usecases.get_notes.GetNotes
 import com.thelumiereguy.reactivepostgres.usecases.update_note.create.CreateNote
+import com.thelumiereguy.reactivepostgres.usecases.update_note.delete.DeleteNote
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -25,25 +25,38 @@ import org.springframework.web.bind.annotation.*
 class NotesController @Autowired constructor(
     private val getNotes: GetNotes,
     private val createNoteUseCase: CreateNote,
+    private val deleteNoteUseCase: DeleteNote,
     private val brokerMessagingTemplate: SimpMessagingTemplate
 ) {
 
+    /**
+     * @return List of all notes
+     */
     @GetMapping(AppURLs.getNotes)
     suspend fun getAllNotes(): GenericResponseDTOWrapper<GetNotesResponseDTO> {
         return GenericResponseDTOWrapper(GetNotesResponseDTO(notes = getNotes()))
     }
 
-//    @DeleteMapping(AppURLs.updateNote)
-//    suspend fun deleteNote(@RequestBody requestDTO: NoteRequestDTO): GenericResponseDTOWrapper<GetNotesResponseDTO> {
-//        return GenericResponseDTOWrapper(GetNotesResponseDTO(notes = getNotes()))
-//    }
+    @DeleteMapping(AppURLs.deleteNote + "/{noteID}")
+    @ResponseStatus(HttpStatus.OK)
+    suspend fun deleteNote(@PathVariable noteID: Long): GenericResponseDTOWrapper<UpdateResponseDTO> {
+        val note = deleteNoteUseCase(noteID)
+        brokerMessagingTemplate.convertAndSend(
+            AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic,
+            NotesUpdateEventDTO(note, UpdateType.deleted.name)
+        )
+        return wrap(UpdateResponseDTO(message = successDeleteMessage, note))
+    }
 
 
-    @PostMapping(AppURLs.updateNote)
+    @PostMapping(AppURLs.createNote)
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun createNote(@RequestBody requestDTO: Note): GenericResponseDTOWrapper<UpdateResponseDTO> {
         val note = createNoteUseCase(requestDTO)
-        brokerMessagingTemplate.convertAndSend(AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic, note)
+        brokerMessagingTemplate.convertAndSend(
+            AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic,
+            NotesUpdateEventDTO(note, UpdateType.created.name)
+        )
         return wrap(UpdateResponseDTO(message = successCreateMessage, note))
     }
 
