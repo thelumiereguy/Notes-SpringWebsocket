@@ -27,6 +27,8 @@ internal class NotesControllerTest @Autowired constructor(
     val client: WebTestClient
 ) {
 
+    val timeStamp = System.currentTimeMillis()
+
     @LocalServerPort
     var port: Int = 0
 
@@ -70,7 +72,7 @@ internal class NotesControllerTest @Autowired constructor(
         @Test
         fun `should create new bank and add to db`() {
 
-            val noteObj = Note("", "", "test_user", System.currentTimeMillis())
+            val noteObj = Note("", "", "test_user", timeStamp)
 
             val session =
                 stompClient.syncConnect(WEBSOCKET_URI)
@@ -107,7 +109,7 @@ internal class NotesControllerTest @Autowired constructor(
         @Test
         fun `basic validations for request body`() {
 
-            val noteObj = Note("", "", "", System.currentTimeMillis())
+            val noteObj = Note("", "", "", timeStamp)
 
             //Add Note
             client.post()
@@ -128,7 +130,7 @@ internal class NotesControllerTest @Autowired constructor(
         @Test
         fun `should delete bank from db`() {
 
-            val noteObj = Note("", "", "test_user", System.currentTimeMillis(), id = 0)
+            val noteObj = Note("", "", "test_user", timeStamp, id = 1)
 
             val session =
                 stompClient.syncConnect(WEBSOCKET_URI)
@@ -162,7 +164,7 @@ internal class NotesControllerTest @Autowired constructor(
 
             //Delete note
             client.delete()
-                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/0")
+                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/1")
                 .exchange()
                 .expectStatus().isOk
                 .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
@@ -185,7 +187,7 @@ internal class NotesControllerTest @Autowired constructor(
 
             //Delete note
             client.delete()
-                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/1")
+                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/10")
                 .exchange()
                 .expectStatus().isNotFound
 
