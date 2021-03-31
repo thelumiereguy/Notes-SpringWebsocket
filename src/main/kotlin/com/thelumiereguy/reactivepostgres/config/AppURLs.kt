@@ -5,6 +5,7 @@ object AppURLs {
     const val getNotes = "/getNotes"
     const val createNote = "/createNote"
     const val deleteNote = "/deleteNote"
+    const val updateNote = "/updateNote"
 
     const val wsEndpoint = "/ws"
     const val applicationEndpoint = "/app"

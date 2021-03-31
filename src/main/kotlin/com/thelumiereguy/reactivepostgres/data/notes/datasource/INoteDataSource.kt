@@ -15,4 +15,6 @@ interface INoteDataSource {
     suspend fun getNoteById(id: Long): Note?
 
     suspend fun deleteNote(noteId: Long)
+
+    fun updateNote(updatedNote: Note): Note
 }

@@ -8,12 +8,14 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.successCreateMessage
 import com.thelumiereguy.reactivepostgres.config.successDeleteMessage
+import com.thelumiereguy.reactivepostgres.config.successUpdateMessage
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.*
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.wrap
 import com.thelumiereguy.reactivepostgres.usecases.get_notes.GetNotes
 import com.thelumiereguy.reactivepostgres.usecases.update_note.create.CreateNote
 import com.thelumiereguy.reactivepostgres.usecases.update_note.delete.DeleteNote
+import com.thelumiereguy.reactivepostgres.usecases.update_note.update.UpdateNote
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -26,6 +28,7 @@ class NotesController @Autowired constructor(
     private val getNotes: GetNotes,
     private val createNoteUseCase: CreateNote,
     private val deleteNoteUseCase: DeleteNote,
+    private val updateNoteUseCase: UpdateNote,
     private val brokerMessagingTemplate: SimpMessagingTemplate
 ) {
 
@@ -61,8 +64,14 @@ class NotesController @Autowired constructor(
     }
 
 
-//    @PutMapping(AppURLs.updateNote)
-//    suspend fun updateNote(@RequestBody requestDTO: NoteRequestDTO): GenericResponseDTOWrapper<GetNotesResponseDTO> {
-//        return GenericResponseDTOWrapper(GetNotesResponseDTO(notes = getNotes()))
-//    }
+    @PutMapping(AppURLs.updateNote)
+    @ResponseStatus(HttpStatus.OK)
+    suspend fun updateNote(@RequestBody requestDTO: Note): GenericResponseDTOWrapper<UpdateResponseDTO> {
+        val note = updateNoteUseCase(requestDTO)
+        brokerMessagingTemplate.convertAndSend(
+            AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic,
+            NotesUpdateEventDTO(note, UpdateType.updated.name)
+        )
+        return wrap(UpdateResponseDTO(message = successUpdateMessage, note))
+    }
 }

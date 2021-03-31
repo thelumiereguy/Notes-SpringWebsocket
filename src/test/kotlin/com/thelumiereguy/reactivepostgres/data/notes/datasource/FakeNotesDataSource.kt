@@ -37,6 +37,18 @@ class FakeNotesDataSource(private val noteMapper: NoteMapper) : INoteDataSource 
     override suspend fun deleteNote(noteId: Long) {
         notesList.removeAll { it.id == noteId }
     }
+
+    override fun updateNote(updatedNote: Note): Note {
+        synchronized(Any()) {
+            val index = notesList.map {
+                it.id
+            }.indexOf(updatedNote.id)
+
+            notesList[index] = noteMapper.toEntity(updatedNote)
+
+            return updatedNote
+        }
+    }
 }
 
 @TestConfiguration

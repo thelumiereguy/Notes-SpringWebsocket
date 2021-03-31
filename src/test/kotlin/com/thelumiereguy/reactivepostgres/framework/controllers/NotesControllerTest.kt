@@ -8,6 +8,7 @@ package com.thelumiereguy.reactivepostgres.framework.controllers
 import com.thelumiereguy.reactivepostgres.config.AppURLs
 import com.thelumiereguy.reactivepostgres.config.successCreateMessage
 import com.thelumiereguy.reactivepostgres.config.successDeleteMessage
+import com.thelumiereguy.reactivepostgres.config.successUpdateMessage
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.*
 import com.thelumiereguy.reactivepostgres.presentation.wrapper.GenericResponseDTOWrapper
 import org.assertj.core.api.Assertions.assertThat
@@ -32,7 +33,7 @@ internal class NotesControllerTest @Autowired constructor(
     @LocalServerPort
     var port: Int = 0
 
-    val WEBSOCKET_URI by lazy {
+    private val WEBSOCKET_URI by lazy {
         "ws://localhost:$port" + AppURLs.wsEndpoint
     }
 
@@ -188,6 +189,86 @@ internal class NotesControllerTest @Autowired constructor(
             //Delete note
             client.delete()
                 .uri(AppURLs.baseURL + AppURLs.deleteNote + "/10")
+                .exchange()
+                .expectStatus().isNotFound
+
+        }
+    }
+
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("PUT ${AppURLs.updateNote}")
+    inner class UpdateNote {
+
+        @Test
+        fun `should update bank in db`() {
+
+            val noteObj = Note("test", "test", "test_user", timeStamp, id = 2)
+
+            val session =
+                stompClient.syncConnect(WEBSOCKET_URI)
+
+            //Subscribe to socket for changes in notes
+            val channel =
+                session.subscribe(
+                    AppURLs.stompBrokerEndpoint + AppURLs.notesSubscriptionTopic,
+                    NotesUpdateEventDTO::class.java
+                )
+
+
+            //Add Note
+            client.post()
+                .uri(AppURLs.baseURL + AppURLs.createNote)
+                .bodyValue(noteObj)
+                .exchange()
+                .expectStatus().isCreated
+                .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
+                .consumeWith {
+                    assertThat(it.responseBody).isNotNull
+                    it.responseBody?.data?.let {
+                        assertThat(it.message).isEqualTo(successCreateMessage)
+                    }
+                }
+
+            val note = channel.next()
+
+            assertEquals(noteObj, note.new_note)
+            assertEquals(UpdateType.created.name, note.type)
+
+
+            val updatedNote = noteObj.copy(title = "New_Title")
+
+            //Update note
+            client.put()
+                .uri(AppURLs.baseURL + AppURLs.updateNote)
+                .bodyValue(updatedNote)
+                .exchange()
+                .expectStatus().isOk
+                .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
+                .consumeWith {
+                    assertThat(it.responseBody).isNotNull
+                    it.responseBody?.data?.let {
+                        assertThat(it.message).isEqualTo(successUpdateMessage)
+                    }
+                }
+
+            //Get latest note pushed to socket
+            val note2 = channel.next()
+
+            assertEquals(updatedNote, note2.new_note)
+            assertEquals(UpdateType.updated.name, note2.type)
+        }
+
+        @Test
+        fun `should throw not found if db doesnt contain the specific note`() {
+
+            val noteObj = Note("test", "test", "test_user", timeStamp, id = 4)
+
+            //Delete note
+            client.put()
+                .uri(AppURLs.baseURL + AppURLs.updateNote)
+                .bodyValue(noteObj)
                 .exchange()
                 .expectStatus().isNotFound
 

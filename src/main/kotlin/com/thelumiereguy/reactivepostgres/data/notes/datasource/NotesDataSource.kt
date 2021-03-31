@@ -35,7 +35,21 @@ class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INote
     }
 
     override suspend fun deleteNote(noteId: Long) {
-        notesList.removeAll { it.id == noteId }
+        synchronized(Any()) {
+            notesList.removeAll { it.id == noteId }
+        }
+    }
+
+    override fun updateNote(updatedNote: Note): Note {
+        synchronized(Any()) {
+            val index = notesList.map {
+                it.id
+            }.indexOf(updatedNote.id)
+
+            notesList[index] = noteMapper.toEntity(updatedNote)
+
+            return updatedNote
+        }
     }
 }
 
