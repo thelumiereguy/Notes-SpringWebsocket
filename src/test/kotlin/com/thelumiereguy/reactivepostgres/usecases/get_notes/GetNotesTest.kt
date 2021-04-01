@@ -8,6 +8,7 @@ package com.thelumiereguy.reactivepostgres.usecases.get_notes
 import com.thelumiereguy.reactivepostgres.data.notes.datasource.TestConfigForNotesDataSource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +24,7 @@ class GetNotesTest constructor(@Autowired val getNotes: GetNotes) {
 
     @Test
     fun `should return all Notes`() {
-        GlobalScope.launch {
+        runBlocking {
             getNotes().forEach {
                 Assertions.assertThat(it).isNotNull
             }
