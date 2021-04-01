@@ -15,6 +15,13 @@ class FakeNotesDataSource(private val noteMapper: NoteMapper) : INoteDataSource 
 
     private val notesList = mutableListOf<NoteEntity>()
 
+    init {
+        println("FakeNotesDataSource")
+        notesList.add(NoteEntity("test1", "test1", "test", System.currentTimeMillis(), 0))
+        notesList.add(NoteEntity("test2", "test2", "test", System.currentTimeMillis(), 1))
+        notesList.add(NoteEntity("test3", "test3", "test", System.currentTimeMillis(), 2))
+    }
+
     override suspend fun getAllNotes(): List<Note> {
         return notesList.map {
             noteMapper.fromEntity(it)

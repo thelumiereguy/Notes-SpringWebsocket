@@ -265,7 +265,7 @@ internal class NotesControllerTest @Autowired constructor(
 
             val noteObj = Note("test", "test", "test_user", timeStamp, id = 4)
 
-            //Delete note
+            //Update note
             client.put()
                 .uri(AppURLs.baseURL + AppURLs.updateNote)
                 .bodyValue(noteObj)

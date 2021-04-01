@@ -16,10 +16,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 @ControllerAdvice(assignableTypes = [NotesController::class])
 class NotesControllerAdvice {
 
+    /**
+     * Thrown when an invalid Note is sent through the request body
+     */
     @ExceptionHandler(BadRequestException::class)
     fun handleBadRequestException(exception: BadRequestException) =
         ResponseEntity(exception.message, HttpStatus.BAD_REQUEST)
 
+    /**
+     * Thrown when the given note is note found
+     */
     @ExceptionHandler(NoSuchNoteException::class)
     fun handleNoNoteException(exception: NoSuchNoteException) =
         ResponseEntity(exception.message, HttpStatus.NOT_FOUND)

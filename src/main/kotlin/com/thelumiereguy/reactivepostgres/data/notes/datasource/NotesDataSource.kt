@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Configuration
 
 class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INoteDataSource {
 
+    init {
+        println("NotesDataSource")
+    }
+
     private val notesList = mutableListOf<NoteEntity>()
 
     override suspend fun getAllNotes(): List<Note> {

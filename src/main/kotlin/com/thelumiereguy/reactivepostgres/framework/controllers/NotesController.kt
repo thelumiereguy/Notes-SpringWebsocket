@@ -40,6 +40,13 @@ class NotesController @Autowired constructor(
         return GenericResponseDTOWrapper(GetNotesResponseDTO(notes = getNotes()))
     }
 
+    /**
+     * Deletes the given note
+     *
+     * Pass the noteId as a query param
+     *
+     * The updated note will be broadcast to all clients
+     */
     @DeleteMapping(AppURLs.deleteNote + "/{noteID}")
     @ResponseStatus(HttpStatus.OK)
     suspend fun deleteNote(@PathVariable noteID: Long): GenericResponseDTOWrapper<UpdateResponseDTO> {
@@ -52,6 +59,14 @@ class NotesController @Autowired constructor(
     }
 
 
+    /**
+     * Creates a note
+     *
+     * Pass the note object through request body
+     * @see Note
+     *
+     * The updated note will be broadcast to all clients
+     */
     @PostMapping(AppURLs.createNote)
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun createNote(@RequestBody requestDTO: Note): GenericResponseDTOWrapper<UpdateResponseDTO> {
@@ -64,6 +79,13 @@ class NotesController @Autowired constructor(
     }
 
 
+    /**
+     * Updates the given note
+     *
+     * Pass the note object through request body
+     *
+     * The updated note will be broadcast to all clients
+     */
     @PutMapping(AppURLs.updateNote)
     @ResponseStatus(HttpStatus.OK)
     suspend fun updateNote(@RequestBody requestDTO: Note): GenericResponseDTOWrapper<UpdateResponseDTO> {
