@@ -5,12 +5,18 @@
 
 package com.thelumiereguy.reactivepostgres.usecases.update_note.delete
 
+import com.thelumiereguy.reactivepostgres.data.notes.datasource.TestConfigForNotesDataSource
 import com.thelumiereguy.reactivepostgres.usecases.get_notes.GetNotes
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = [TestConfigForNotesDataSource::class]
+)
 internal class DeleteNoteTest constructor(
     @Autowired val getNotes: GetNotes,
     @Autowired val deleteNote: DeleteNote

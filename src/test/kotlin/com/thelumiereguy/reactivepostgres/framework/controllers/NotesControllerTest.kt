@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 
@@ -124,6 +125,7 @@ internal class NotesControllerTest @Autowired constructor(
 
 
     @Nested
+    @DirtiesContext
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("DELETE ${AppURLs.deleteNote}")
     inner class DeleteNote {
@@ -197,6 +199,7 @@ internal class NotesControllerTest @Autowired constructor(
 
 
     @Nested
+    @DirtiesContext
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("PUT ${AppURLs.updateNote}")
     inner class UpdateNote {
