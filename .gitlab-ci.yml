@@ -1,5 +1,6 @@
+---
 test_runner:
   script:
-    - echo Hello World
+    - "echo Hello World"
   tags:
-    - spring_boot,ci,test
+    - "spring_boot,ci,test"
