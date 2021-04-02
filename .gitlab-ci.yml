@@ -1,17 +1,21 @@
 image: springci/spring-boot-jdk14-ci-image:2.4.x
 
-stages:
-  - build
-  - test
+before_script:
+  - echo "Start CI/CD"
 
-build:
-  stage: build
-  script:
-    - ./gradlew assemble
-  only:
-    - master
 
-test:
-  stage: test
-  script:
-    - ./gradlew clean test
+#stages:
+#  - build
+#  - test
+#
+#build:
+#  stage: build
+#  script:
+#    - ./gradlew assemble
+#  only:
+#    - master
+#
+#test:
+#  stage: test
+#  script:
+#    - ./gradlew clean test
