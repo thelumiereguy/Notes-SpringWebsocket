@@ -8,8 +8,6 @@ package com.thelumiereguy.reactivepostgres.usecases.update_note.create
 import com.thelumiereguy.reactivepostgres.data.notes.datasource.TestConfigForNotesDataSource
 import com.thelumiereguy.reactivepostgres.presentation.dto.note.Note
 import com.thelumiereguy.reactivepostgres.usecases.get_notes.GetNotes
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
