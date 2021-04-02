@@ -1,17 +1,12 @@
 image: coderunner/java15:2021-02-09_11-46
 
 stages:
-  - build
-  - test
+  - buildTest
 
 build:
   stage: build
   script:
     - ./gradlew assemble
+    - ./gradlew test
   only:
     - master
-
-test:
-  stage: test
-  script:
-    - ./gradlew clean test
