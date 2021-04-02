@@ -1,9 +1,15 @@
 image: springci/spring-boot-jdk14-ci-image:2.4.x
 
+stages:
+  - build
+  - test
+
 build:
   stage: build
   script:
-    - ./gradlew build
+    - ./gradlew assemble
+  only:
+    - master
 
 test:
   stage: test
