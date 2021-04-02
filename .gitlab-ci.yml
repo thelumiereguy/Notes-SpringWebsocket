@@ -1,21 +1,17 @@
 image: sonamsamdupkhangsar/springboot-docker:latest
 
-test-runner:
-  script:
-    - echo "End CI/CD"
+stages:
+  - build
+  - test
 
-#stages:
-#  - build
-#  - test
-#
-#build:
-#  stage: build
-#  script:
-#    - ./gradlew assemble
-#  only:
-#    - master
-#
-#test:
-#  stage: test
-#  script:
-#    - ./gradlew clean test
+build:
+  stage: build
+  script:
+    - ./gradlew assemble
+  only:
+    - master
+
+test:
+  stage: test
+  script:
+    - ./gradlew clean test
