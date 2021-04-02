@@ -1,4 +1,4 @@
-image: sonamsamdupkhangsar/springboot-docker:latest
+image: tomohito/springboot-bestpractice:1.0.0
 
 stages:
   - build
