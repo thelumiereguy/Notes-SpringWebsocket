@@ -22,7 +22,6 @@ internal class DeleteNoteTest constructor(
     @Autowired val deleteNote: DeleteNote
 ) {
 
-
     @Test
     fun `given a note Id, it should be deleted from the data source`(): Unit = runBlocking {
         val noteId = 1L
