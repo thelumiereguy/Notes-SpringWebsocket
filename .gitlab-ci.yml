@@ -1,4 +1,4 @@
-image: springci/spring-boot-jdk14-ci-image:latest
+image: springci/spring-boot-jdk14-ci-image
 
 build:
   stage: build
