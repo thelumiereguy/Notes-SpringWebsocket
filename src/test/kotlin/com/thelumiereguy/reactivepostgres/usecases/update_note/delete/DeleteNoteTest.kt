@@ -28,7 +28,6 @@ internal class DeleteNoteTest constructor(
         //Assert that the note exists
         Assertions.assertThat(getNotes().map { it.id }).contains(noteId)
 
-
         deleteNote.invoke(noteId)
         //Assert that the note is deleted
         Assertions.assertThat(getNotes().map { it.id }).doesNotContain(noteId)
