@@ -1,6 +1,8 @@
+image: sonamsamdupkhangsar/springboot-docker:latest
+
 test-runner:
   script:
-    - echo "Start CI/CD"
+    - echo "End CI/CD"
 
 #stages:
 #  - build
