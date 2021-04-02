@@ -1,6 +1,11 @@
----
-test_runner:
+image: springci/spring-boot-jdk14-ci-image:latest
+
+build:
+  stage: build
   script:
-    - "echo Hello World"
-  tags:
-    - "ci,docker,spring_boot"
+    - ./gradlew build
+
+test:
+  stage: test
+  script:
+    - ./gradlew clean test
