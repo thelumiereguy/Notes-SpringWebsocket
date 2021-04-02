@@ -1,5 +1,3 @@
-image: springci/spring-boot-ci-image:2.2.x
-
 test-runner:
   script:
     - echo "Start CI/CD"
