@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest
 )
 class CreateNoteTest constructor(@Autowired val getNotes: GetNotes, @Autowired val createNote: CreateNote) {
 
-
     @Test
     fun `given a note, it should be added to datasource`() {
         val noteId = 10L
