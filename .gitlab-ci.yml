@@ -1,8 +1,8 @@
 image: springci/spring-boot-jdk14-ci-image:2.4.x
 
-before_script:
-  - echo "Start CI/CD"
-
+test-runner:
+  script:
+    - echo "Start CI/CD"
 
 #stages:
 #  - build
