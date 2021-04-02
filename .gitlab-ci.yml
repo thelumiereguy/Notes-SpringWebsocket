@@ -1,4 +1,4 @@
-image: tomohito/springboot-bestpractice:1.0.0
+image: coderunner/java15:2021-02-09_11-46
 
 stages:
   - build
