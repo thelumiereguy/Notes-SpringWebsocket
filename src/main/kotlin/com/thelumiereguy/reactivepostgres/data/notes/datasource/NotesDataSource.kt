@@ -24,7 +24,7 @@ class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INote
                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                 "thelumiereguy",
                 System.currentTimeMillis(),
-                0
+                1
             )
         )
 
@@ -34,7 +34,7 @@ class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INote
                 "Contrary to popular belief, Lorem Ipsum is not simply random text.",
                 "Probablythelumiereguy",
                 System.currentTimeMillis(),
-                1
+                2
             )
         )
 
@@ -44,7 +44,7 @@ class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INote
                 "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
                 "Notthelumiereguy",
                 System.currentTimeMillis(),
-                2
+                3
             )
         )
     }
