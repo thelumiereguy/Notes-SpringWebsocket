@@ -133,7 +133,7 @@ internal class NotesControllerTest @Autowired constructor(
         @Test
         fun `should delete bank from db`() {
 
-            val noteObj = Note("", "", "test_user", timeStamp, id = 1)
+            val noteObj = Note("", "", "test_user", timeStamp, id = 10)
 
             val session =
                 stompClient.syncConnect(WEBSOCKET_URI)
@@ -167,7 +167,7 @@ internal class NotesControllerTest @Autowired constructor(
 
             //Delete note
             client.delete()
-                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/1")
+                .uri(AppURLs.baseURL + AppURLs.deleteNote + "/10")
                 .exchange()
                 .expectStatus().isOk
                 .expectBody<GenericResponseDTOWrapper<UpdateResponseDTO>>()
