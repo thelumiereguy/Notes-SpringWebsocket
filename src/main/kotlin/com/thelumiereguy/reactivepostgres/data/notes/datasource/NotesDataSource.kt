@@ -14,11 +14,40 @@ import org.springframework.context.annotation.Configuration
 
 class NotesDataSource constructor(@Autowired val noteMapper: NoteMapper) : INoteDataSource {
 
+    private val notesList = mutableListOf<NoteEntity>()
+
     init {
         println("NotesDataSource")
-    }
+        notesList.add(
+            NoteEntity(
+                "Note 1",
+                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                "thelumiereguy",
+                System.currentTimeMillis(),
+                0
+            )
+        )
 
-    private val notesList = mutableListOf<NoteEntity>()
+        notesList.add(
+            NoteEntity(
+                "Note 2",
+                "Contrary to popular belief, Lorem Ipsum is not simply random text.",
+                "Probablythelumiereguy",
+                System.currentTimeMillis(),
+                1
+            )
+        )
+
+        notesList.add(
+            NoteEntity(
+                "Note 3",
+                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                "Notthelumiereguy",
+                System.currentTimeMillis(),
+                2
+            )
+        )
+    }
 
     override suspend fun getAllNotes(): List<Note> {
         return notesList.map {
